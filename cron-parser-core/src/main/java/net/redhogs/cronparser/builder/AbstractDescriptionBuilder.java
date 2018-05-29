@@ -1,11 +1,12 @@
 package net.redhogs.cronparser.builder;
 
-import net.redhogs.cronparser.I18nMessages;
-import net.redhogs.cronparser.Options;
+import java.text.MessageFormat;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
-import java.text.MessageFormat;
+import net.redhogs.cronparser.I18nMessages;
+import net.redhogs.cronparser.Options;
 
 /**
  * @author grhodes
@@ -24,14 +25,27 @@ public abstract class AbstractDescriptionBuilder {
         } else if (!StringUtils.containsAny(expression, SpecialCharsMinusStar)) {
             description = MessageFormat.format(getDescriptionFormat(expression), getSingleItemDescription(expression));
         } else if (expression.contains("/")) {
-            String[] segments = expression.split("/");
-            description = MessageFormat.format(getIntervalDescriptionFormat(segments[1]), getSingleItemDescription(segments[1]));
-            // interval contains 'between' piece (e.g. 2-59/3)
-            if (segments[0].contains("-")) {
-                String betweenSegmentOfInterval = segments[0];
-                String[] betweenSegments = betweenSegmentOfInterval.split("-");
-                description += ", " + MessageFormat.format(getBetweenDescriptionFormat(betweenSegmentOfInterval, false), getSingleItemDescription(betweenSegments[0]), getSingleItemDescription(betweenSegments[1]));
-            }
+        	if (expression.contains(",")) {
+				final String[] childEx = expression.split(",");
+				for (int i = 0; i < childEx.length; i++) {
+					description += getSegmentDescription(childEx[i], StringUtils.EMPTY);
+				}
+			} else {
+				String[] segments = expression.split("/");
+				description = MessageFormat.format(
+						getIntervalDescriptionFormat(segments[1]) + " "
+								+ I18nMessages.get("from_x"),
+						getSingleItemDescription(segments[0]));
+				// interval contains 'between' piece (e.g. 2-59/3)
+				if (segments[0].contains("-")) {
+					String betweenSegmentOfInterval = segments[0];
+					String[] betweenSegments = betweenSegmentOfInterval.split("-");
+					description += ", " + MessageFormat.format(
+							getBetweenDescriptionFormat(betweenSegmentOfInterval, false),
+							getSingleItemDescription(betweenSegments[0]),
+							getSingleItemDescription(betweenSegments[1]));
+				}
+        	}
         } else if (expression.contains(",")) {
             String[] segments = expression.split(",");
             StringBuilder descriptionContent = new StringBuilder();

@@ -1,15 +1,16 @@
 package net.redhogs.cronparser.builder;
 
-import net.redhogs.cronparser.DateAndTimeUtils;
-import net.redhogs.cronparser.I18nMessages;
-import net.redhogs.cronparser.Options;
+import java.text.MessageFormat;
+import java.util.Locale;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import java.text.MessageFormat;
-import java.util.Locale;
+import net.redhogs.cronparser.DateAndTimeUtils;
+import net.redhogs.cronparser.I18nMessages;
+import net.redhogs.cronparser.Options;
 
 /**
  * @author grhodes
@@ -32,7 +33,7 @@ public class DayOfWeekDescriptionBuilder extends AbstractDescriptionBuilder {
     }
 
     @Override
-    protected String getSingleItemDescription(String expression) {
+	protected String getSingleItemDescription(String expression) {
         String exp = expression;
         if (expression.contains("#")) {
             exp = expression.substring(0, expression.indexOf("#"));
@@ -57,7 +58,8 @@ public class DayOfWeekDescriptionBuilder extends AbstractDescriptionBuilder {
 
     @Override
     protected String getIntervalDescriptionFormat(String expression) {
-        return MessageFormat.format(", "+I18nMessages.get("interval_description_format"), expression);
+		return MessageFormat.format(", " + I18nMessages.get("interval_description_format"),
+				expression);
     }
 
     @Override
