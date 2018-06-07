@@ -33,17 +33,21 @@ public abstract class AbstractDescriptionBuilder {
 			} else {
 				String[] segments = expression.split("/");
 				description = MessageFormat.format(
-						getIntervalDescriptionFormat(segments[1]) + " "
-								+ I18nMessages.get("from_x"),
-						getSingleItemDescription(segments[0]));
+						getIntervalDescriptionFormat(segments[1]), segments[1]);
 				// interval contains 'between' piece (e.g. 2-59/3)
 				if (segments[0].contains("-")) {
 					String betweenSegmentOfInterval = segments[0];
 					String[] betweenSegments = betweenSegmentOfInterval.split("-");
-					description += ", " + MessageFormat.format(
+					description += " " + MessageFormat.format(
 							getBetweenDescriptionFormat(betweenSegmentOfInterval, false),
 							getSingleItemDescription(betweenSegments[0]),
 							getSingleItemDescription(betweenSegments[1]));
+				} else {
+					if (!segments[0].equals("*")) {
+						description += " "
+								+ MessageFormat.format(I18nMessages.get("from_x"),
+								segments[0]);
+					}
 				}
         	}
         } else if (expression.contains(",")) {
